@@ -27,6 +27,7 @@ interface RedirectOptions {
   passwordResetToken?: string;
   state?: any;
   type: "sign-in" | "sign-up";
+  routingFn?: (url: string) => void;
 }
 
 type State =
@@ -387,6 +388,7 @@ An authorization_code was supplied for a login which did not originate at the ap
     passwordResetToken,
     state,
     type,
+    routingFn = window.location.assign,
   }: RedirectOptions) {
     const { codeVerifier, codeChallenge } = await createPkceChallenge();
     // store the code verifier in session storage for later use (after the redirect back from authkit)
@@ -404,7 +406,7 @@ An authorization_code was supplied for a login which did not originate at the ap
       state: state ? JSON.stringify(state) : undefined,
     });
 
-    window.location.assign(url);
+    routingFn(url)
   }
 
   #getAccessToken() {
